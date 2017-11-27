@@ -40,19 +40,7 @@ public class ParserJava
         FileInputStream file = new FileInputStream(filePath);
         CompilationUnit unit = JavaParser.parse(file);
 
-        getClassDeclaration(unit);
-        getAttributeDeclaration(unit);
-        getConstructorDeclaration(unit);
-        getMethodDeclaration(unit);
-        getRelationshipDeclaration(unit);
-
-//        System.out.println(classes.trim());
-//        System.out.println(attributes.trim());
-//        System.out.println(methods);
-//        System.out.println("MaxHeight :" + contentHeight);
-//        System.out.println("MaxWidth :" + contentWidth);
-//        System.out.println("Extends :" + extendRelationship);
-//        System.out.println("Implement :" + implementRelationship);
+        getClassParser(unit);
     }
 
     public String getContent() {
@@ -88,26 +76,74 @@ public class ParserJava
     }
 
     /**
-     * Get the declaration of attributes
+     * Parse java class
      * @param unit Compilation unit
      */
-    private void getAttributeDeclaration(CompilationUnit unit)
+    private void getClassParser(CompilationUnit unit)
     {
         NodeList<TypeDeclaration<?>> types = unit.getTypes();
         for (TypeDeclaration<?> type : types)
         {
-            NodeList<BodyDeclaration<?>> members = type.getMembers();
-            for (BodyDeclaration<?> member : members)
+            if (type instanceof ClassOrInterfaceDeclaration)
             {
-                if (member instanceof FieldDeclaration)
+
+                ClassOrInterfaceDeclaration classOrInterface = (ClassOrInterfaceDeclaration) type;
+
+                // Get class
+                content += classOrInterface.getNameAsString() + "\n";
+                classes += classOrInterface.getNameAsString() + "\n";
+                contentHeight++;
+                calculateContentWidth(classOrInterface.getNameAsString().length());
+
+                // Get class relationship
+                NodeList<ClassOrInterfaceType> classList = classOrInterface.getExtendedTypes();
+                NodeList<ClassOrInterfaceType> interfaceList = classOrInterface.getImplementedTypes();
+                for (ClassOrInterfaceType list : classList)
                 {
-                    FieldDeclaration field = (FieldDeclaration) member;
-                    content += AttributeParser(field) + "\n";
-                    attributes += AttributeParser(field) + "\n";
-                    contentHeight++;
-                    calculateContentWidth(AttributeParser(field).length());
+                    extendRelationship += list.getNameAsString() + " ";
+                }
+                for (ClassOrInterfaceType list : interfaceList)
+                {
+                    implementRelationship += list.getNameAsString() + " ";
+                }
+
+                // Get members in class
+                NodeList<BodyDeclaration<?>> members = classOrInterface.getMembers();
+
+                for (BodyDeclaration<?> member : members)
+                {
+                    // Get constructors
+                    if (member instanceof ConstructorDeclaration)
+                    {
+                        ConstructorDeclaration constructor = (ConstructorDeclaration) member;
+                        content += ConstructorParser(constructor) + "\n";
+                        methods += ConstructorParser(constructor) + "\n";
+                        contentHeight++;
+                        calculateContentWidth(ConstructorParser(constructor).length());
+                    }
+
+                    // Get fields
+                    if (member instanceof FieldDeclaration)
+                    {
+                        FieldDeclaration field = (FieldDeclaration) member;
+                        content += AttributeParser(field) + "\n";
+                        attributes += AttributeParser(field) + "\n";
+                        contentHeight++;
+                        calculateContentWidth(AttributeParser(field).length());
+                    }
+
+                    // Get methods
+                    if (member instanceof MethodDeclaration)
+                    {
+                        MethodDeclaration method = (MethodDeclaration) member;
+                        content += MethodParser(method) + "\n";
+                        methods += MethodParser(method) + "\n";
+                        contentHeight++;
+                        calculateContentWidth(MethodParser(method).length());
+                    }
                 }
             }
+
         }
     }
 
@@ -139,51 +175,6 @@ public class ParserJava
     }
 
     /**
-     * Get the declaration of class
-     * @param unit Compilation unit
-     * @return Name of class
-     */
-    private void getClassDeclaration(CompilationUnit unit)
-    {
-        NodeList<TypeDeclaration<?>> types = unit.getTypes();
-        for (TypeDeclaration<?> type : types)
-        {
-            if (type instanceof ClassOrInterfaceDeclaration)
-            {
-                ClassOrInterfaceDeclaration name = (ClassOrInterfaceDeclaration) type;
-                content += name.getNameAsString() + "\n";
-                classes += name.getNameAsString() + "\n";
-                contentHeight++;
-                calculateContentWidth(name.getNameAsString().length());
-            }
-        }
-    }
-
-    /**
-     * Get the declaration of methods
-     * @param unit Compilation unit
-     */
-    private void getMethodDeclaration(CompilationUnit unit)
-    {
-        NodeList<TypeDeclaration<?>> types = unit.getTypes();
-        for (TypeDeclaration<?> type : types)
-        {
-            NodeList<BodyDeclaration<?>> members = type.getMembers();
-            for (BodyDeclaration<?> member : members)
-            {
-                if (member instanceof MethodDeclaration)
-                {
-                    MethodDeclaration method = (MethodDeclaration) member;
-                    content += MethodParser(method) + "\n";
-                    methods += MethodParser(method) + "\n";
-                    contentHeight++;
-                    calculateContentWidth(MethodParser(method).length());
-                }
-            }
-        }
-    }
-
-    /**
      * Parse method to string
      * @param method Methods
      * @return Information of methods
@@ -203,56 +194,6 @@ public class ParserJava
         String name = string.substring(string.indexOf(" ")+1, string.length());
 
         return visibility + name + " : " + type;
-    }
-
-    /**
-     * Get extends or implements of class
-     * @param unit Compilation unit
-     */
-    private void getRelationshipDeclaration(CompilationUnit unit)
-    {
-        NodeList<TypeDeclaration<?>> types = unit.getTypes();
-        for (TypeDeclaration<?> type : types)
-        {
-            if (type instanceof ClassOrInterfaceDeclaration)
-            {
-                ClassOrInterfaceDeclaration classOrInterface = (ClassOrInterfaceDeclaration) type;
-                NodeList<ClassOrInterfaceType> classList = classOrInterface.getExtendedTypes();
-                NodeList<ClassOrInterfaceType> interfaceList = classOrInterface.getImplementedTypes();
-                for (ClassOrInterfaceType list : classList)
-                {
-                    extendRelationship += list.getNameAsString() + " ";
-                }
-                for (ClassOrInterfaceType list : interfaceList)
-                {
-                    implementRelationship += list.getNameAsString() + " ";
-                }
-            }
-        }
-    }
-
-    /**
-     * Get constructor declaration
-     * @param unit Compilation unit
-     */
-    private void getConstructorDeclaration(CompilationUnit unit)
-    {
-        NodeList<TypeDeclaration<?>> types = unit.getTypes();
-        for (TypeDeclaration<?> type : types)
-        {
-            NodeList<BodyDeclaration<?>> members = type.getMembers();
-            for (BodyDeclaration<?> member : members)
-            {
-                if (member instanceof ConstructorDeclaration)
-                {
-                    ConstructorDeclaration constructor = (ConstructorDeclaration) member;
-                    content += ConstructorParser(constructor) + "\n";
-                    methods += ConstructorParser(constructor) + "\n";
-                    contentHeight++;
-                    calculateContentWidth(ConstructorParser(constructor).length());
-                }
-            }
-        }
     }
 
     /**
