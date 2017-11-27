@@ -1,0 +1,17 @@
+public class Someting extends Some{
+    public int a;
+    private String b;
+    protected int c;
+    package String d;
+
+
+
+    public void thisIsATest(int a){
+        int a;
+        int b ;
+    }
+
+    private int dsada(int a) {
+
+    }
+}
