@@ -4,6 +4,7 @@ import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
@@ -24,17 +25,34 @@ public class ParserJava
 
     public static void main(String[] args) throws Exception
     {
-        ParserJava java1 = new ParserJava("/home/linuxpenguin/IdeaProjects/Seminar/src/Parser.java");
-//        System.out.println(java1.getContent());
-        System.out.println(java1.getClasses());
-        System.out.println(java1.getAttributes());
-        System.out.println(java1.getMethods());
-        System.out.println(java1.getContentHeight());
-        System.out.println(java1.getContentWidth());
-        System.out.println(java1.getExtendRelationship());
-        System.out.println(java1.getImplementRelationship());
+//        ParserJava java1 = new ParserJava("/home/linuxpenguin/IdeaProjects/Seminar/src/Parser.java");
+
+        String projectPath = "/home/linuxpenguin/IdeaProjects/milkcoffee/";
+        FileFinder fileFinder = new FileFinder(projectPath);
+        File[] javaList = fileFinder.getFileList();
+        ParserJava[] java1 = new ParserJava[javaList.length];
+        int i = 0;
+        for (File java : javaList)
+        {
+            java1[i] = new ParserJava(java.getAbsolutePath());
+            i++;
+            System.out.println(java.getAbsolutePath());
+        }
+        int j = 0;
+        for(File java : javaList)
+        {
+            System.out.println(java1[j].getClasses());
+            System.out.println(java1[j].getMethods());
+            System.out.println(java1[j].getExtendRelationship());
+            j++;
+        }
     }
 
+    /**
+     * Constructor
+     * @param filePath Path of the file
+     * @throws IOException
+     */
     public ParserJava(String filePath) throws IOException
     {
         FileInputStream file = new FileInputStream(filePath);
@@ -88,6 +106,7 @@ public class ParserJava
             {
 
                 ClassOrInterfaceDeclaration classOrInterface = (ClassOrInterfaceDeclaration) type;
+<<<<<<< Updated upstream
 
                 // Get class
                 content += classOrInterface.getNameAsString() + "\n";
@@ -140,8 +159,64 @@ public class ParserJava
                         methods += MethodParser(method) + "\n";
                         contentHeight++;
                         calculateContentWidth(MethodParser(method).length());
+=======
+                if (classOrInterface.isClassOrInterfaceDeclaration())
+                {
+                    // Get class
+                    classes += classOrInterface.getNameAsString() + "\n";
+                    contentHeight++;
+                    calculateContentWidth(classOrInterface.getNameAsString().length());
+
+                    // Get class relationship
+                    NodeList<ClassOrInterfaceType> classList = classOrInterface.getExtendedTypes();
+                    NodeList<ClassOrInterfaceType> interfaceList = classOrInterface.getImplementedTypes();
+                    for (ClassOrInterfaceType list : classList)
+                    {
+                        extendRelationship += list.getNameAsString() + " ";
+                    }
+                    for (ClassOrInterfaceType list : interfaceList)
+                    {
+                        implementRelationship += list.getNameAsString() + " ";
+                    }
+
+                    // Get members in class
+                    NodeList<BodyDeclaration<?>> members = classOrInterface.getMembers();
+
+                    for (BodyDeclaration<?> member : members)
+                    {
+                        // Get constructors
+                        if (member instanceof ConstructorDeclaration)
+                        {
+                            ConstructorDeclaration constructor = (ConstructorDeclaration) member;
+                            content += ConstructorParser(constructor) + "\n";
+                            methods += ConstructorParser(constructor) + "\n";
+                            contentHeight++;
+                            calculateContentWidth(ConstructorParser(constructor).length());
+                        }
+
+                        // Get fields
+                        if (member instanceof FieldDeclaration)
+                        {
+                            FieldDeclaration field = (FieldDeclaration) member;
+                            content += AttributeParser(field) + "\n";
+                            attributes += AttributeParser(field) + "\n";
+                            contentHeight++;
+                            calculateContentWidth(AttributeParser(field).length());
+                        }
+
+                        // Get methods
+                        if (member instanceof MethodDeclaration)
+                        {
+                            MethodDeclaration method = (MethodDeclaration) member;
+                            content += MethodParser(method) + "\n";
+                            methods += MethodParser(method) + "\n";
+                            contentHeight++;
+                            calculateContentWidth(MethodParser(method).length());
+                        }
+>>>>>>> Stashed changes
                     }
                 }
+
             }
 
         }
@@ -213,6 +288,10 @@ public class ParserJava
         return visibility + constructor.getDeclarationAsString(false, false, false);
     }
 
+    /**
+     * Calculate width
+     * @param stringWidth Maximum width of string
+     */
     private void calculateContentWidth(int stringWidth)
     {
         if (stringWidth > contentWidth)

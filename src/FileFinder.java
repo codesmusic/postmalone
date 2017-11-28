@@ -7,12 +7,28 @@ import java.io.FilenameFilter;
  */
 public class FileFinder
 {
-    public static void main(String[] args)
+    private File[] fileList;
+
+    /**
+     * Default constructor
+     */
+    public FileFinder()
     {
-        String projectPath = "/home/linuxpenguin/IdeaProjects/Seminar/";
+
+    }
+
+    /**
+     * Constructor
+     * @param projectPath Path of project folder
+     */
+    public FileFinder(String projectPath)
+    {
         File[] javaFiles = findFileJava(getSrcPath(projectPath));
-        for (File file : javaFiles)
-            System.out.println(file);
+        fileList = javaFiles;
+    }
+
+    public File[] getFileList() {
+        return fileList;
     }
 
     /**
