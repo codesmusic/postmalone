@@ -1,5 +1,5 @@
 import java.io.File;
-import java.io.FilenameFilter;
+import java.util.ArrayList;
 
 /**
  * This class is to find all the java file in project folder
@@ -7,7 +7,7 @@ import java.io.FilenameFilter;
  */
 public class FileFinder
 {
-    private File[] fileList;
+    private ArrayList<String> fileList = new ArrayList<>();
 
     /**
      * Default constructor
@@ -23,39 +23,39 @@ public class FileFinder
      */
     public FileFinder(String projectPath)
     {
-        File[] javaFiles = findFileJava(getSrcPath(projectPath));
-        fileList = javaFiles;
-    }
-
-    public File[] getFileList() {
-        return fileList;
+        findFileJava(projectPath);
     }
 
     /**
-     * Navigate to the source folder of project
-     * @param projectPath Path of project folder
-     * @return Path of source folder that contains java files
+     * Getter
+     * @return Array list of file path
      */
-    private static String getSrcPath(String projectPath)
-    {
-        return projectPath + "/src";
+    public ArrayList<String> getFileList() {
+        return fileList;
     }
 
     /**
      * Find all java files in folder
-     * @param folderPath Folder that contains java files
+     * @param projectPath Folder that contains java files
      * @return A list of java files
      */
-    private static File[] findFileJava(String folderPath)
+    private void findFileJava(String projectPath)
     {
-        File dir = new File(folderPath);
-        File[] fileList = dir.listFiles(new FilenameFilter()
+
+        File dir = new File(projectPath);
+
+        File[] fList = dir.listFiles();
+        for (File file : fList)
         {
-            public boolean accept(File dir, String name)
+            if (file.isFile())
             {
-                return name.endsWith(".java");
+                if (file.getName().endsWith(".java"))
+                {
+                    fileList.add(file.getAbsolutePath());
+                }
             }
-        });
-        return fileList;
+            else if (file.isDirectory())
+                findFileJava(file.getAbsolutePath());
+        }
     }
 }

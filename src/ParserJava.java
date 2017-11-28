@@ -1,13 +1,14 @@
 
 import com.github.javaparser.JavaParser;
+import com.github.javaparser.ParseProblemException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Parse java file to class, attributes, methods,...
@@ -24,33 +25,59 @@ public class ParserJava
     private String methods = "";
     private String attributes = "";
 
-    public static void main(String[] args) throws Exception
+    public static void main(String[] args) throws ParseProblemException
     {
-        ParserJava java1 = new ParserJava("/home/linuxpenguin/IdeaProjects/Seminar/src/Parser.java");
+        // Find all the java files in project recursively. Need to change path to project folder
         FileFinder fileFinder = new FileFinder("/home/linuxpenguin/IdeaProjects/milkcoffee/");
-        File[] javaList =  fileFinder.getFileList();
-        ParserJava[] parser = new ParserJava[javaList.length];
-        int i = 0;
-        for (File java : javaList)
+
+        // An array that store java file path
+        ArrayList<String> javaList =  fileFinder.getFileList();
+
+        // Number of java file inside javaList
+        int size = javaList.size();
+
+        // Create an array of ParserJava
+        ParserJava[] javas = new ParserJava[size];
+
+        System.out.println(size);
+
+        for (int i = 0; i < size; i++)
         {
-            System.out.println(java.getAbsolutePath());
-            parser[i] = new ParserJava(java.getAbsolutePath());
-            i++;
+            System.out.println(javaList.get(i));
+            javas[i] = new ParserJava(javaList.get(i));
         }
 
-        for (ParserJava parserJava : parser)
+        // Print all methods of all java files
+        for (ParserJava java : javas)
         {
-            System.out.println(parserJava.getClasses());
-            System.out.println(parserJava.getMethods());
+            System.out.println(java.getMethods());
         }
+
     }
 
-    public ParserJava(String filePath) throws IOException
+    /**
+     * Constructor
+     * @param filePath Path of the file
+     */
+    public ParserJava(String filePath)
     {
-        FileInputStream file = new FileInputStream(filePath);
-        CompilationUnit unit = JavaParser.parse(file);
+        try
+        {
+            FileInputStream file = new FileInputStream(filePath);
+            CompilationUnit unit = JavaParser.parse(file);
 
-        getClassParser(unit);
+            getClassParser(unit);
+        }
+        catch (IOException ex)
+        {
+            System.out.println("No file was found!");
+            ex.printStackTrace();
+        }
+        catch (ParseProblemException ex)
+        {
+            System.out.println("Input java file was wrong!");
+            ex.printStackTrace();
+        }
     }
 
     public String getContent() {
@@ -223,6 +250,10 @@ public class ParserJava
         return visibility + constructor.getDeclarationAsString(false, false, false);
     }
 
+    /**
+     * Calculate the maximum width of string
+     * @param stringWidth Width of string
+     */
     private void calculateContentWidth(int stringWidth)
     {
         if (stringWidth > contentWidth)
