@@ -285,7 +285,7 @@ public class ParserJava
         {
             if (!java.appeared)
             {
-                java.setExtendRelationship("null");
+                java.setExtendRelationship("");
             }
         }
     }
