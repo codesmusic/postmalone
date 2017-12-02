@@ -33,6 +33,7 @@ public class ParserJava
 
         // An array that store java file path
         ArrayList<String> javaList =  fileFinder.getFileList();
+        ArrayList<String> filesName = fileFinder.getFileNameList();
 
         // Number of java file inside javaList
         int size = javaList.size();
@@ -44,18 +45,32 @@ public class ParserJava
 
         for (int i = 0; i < size; i++)
         {
-            System.out.println(javaList.get(i));
+//            System.out.println(javaList.get(i));
             javas[i] = new ParserJava(javaList.get(i));
         }
+
+        for (String da : filesName)
+        {
+            System.out.println(da);
+        }
+
         // Something that I don't understand. What is this used for?
-        somethingThongWannaDo(javas);
+//        somethingThongWannaDo(javas);
 
         // Print all methods of all java files
+
+        for (ParserJava java : javas)
+        {
+            java.something2(filesName);
+        }
+
         for (ParserJava java : javas)
         {
             System.out.println("Name : " + java.getClasses());
             System.out.println("Extend class : " + java.getExtendRelationship().trim() + "\n");
+//            java.something2(filesName);
         }
+
 
     }
 
@@ -269,6 +284,10 @@ public class ParserJava
             contentWidth = stringWidth;
     }
 
+    /**
+     *
+     * @param javas
+     */
     public static void somethingThongWannaDo(ParserJava[] javas)
     {
         for (ParserJava java :  javas)
@@ -281,6 +300,7 @@ public class ParserJava
                 }
             }
         }
+
         for (ParserJava java : javas)
         {
             if (!java.appeared)
@@ -288,5 +308,23 @@ public class ParserJava
                 java.setExtendRelationship("");
             }
         }
+    }
+
+    /**
+     *
+     * @param filesName
+     */
+    public void something2(ArrayList<String> filesName)
+    {
+        boolean isExisted = false;
+        for (String filename : filesName)
+        {
+            if (!isExisted && this.getExtendRelationship().trim().equals(filename))
+            {
+                isExisted = true;
+            }
+        }
+        if(!isExisted)
+            this.setExtendRelationship("");
     }
 }
