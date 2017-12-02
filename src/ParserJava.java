@@ -24,6 +24,7 @@ public class ParserJava
     private String classes = "";
     private String methods = "";
     private String attributes = "";
+    private boolean appeared = false;
 
     public static void main(String[] args) throws ParseProblemException
     {
@@ -46,11 +47,14 @@ public class ParserJava
             System.out.println(javaList.get(i));
             javas[i] = new ParserJava(javaList.get(i));
         }
+        // Something that I don't understand. What is this used for?
+        somethingThongWannaDo(javas);
 
         // Print all methods of all java files
         for (ParserJava java : javas)
         {
-            System.out.println(java.getMethods());
+            System.out.println("Name : " + java.getClasses());
+            System.out.println("Extend class : " + java.getExtendRelationship().trim() + "\n");
         }
 
     }
@@ -67,6 +71,7 @@ public class ParserJava
             CompilationUnit unit = JavaParser.parse(file);
 
             getClassParser(unit);
+
         }
         catch (IOException ex)
         {
@@ -112,6 +117,10 @@ public class ParserJava
         return attributes;
     }
 
+    public void setExtendRelationship(String extendRelationship) {
+        this.extendRelationship = extendRelationship;
+    }
+
     /**
      * Parse java class
      * @param unit Compilation unit
@@ -128,7 +137,7 @@ public class ParserJava
 
                 // Get class
                 content += classOrInterface.getNameAsString() + "\n";
-                classes += classOrInterface.getNameAsString() + "\n";
+                classes += classOrInterface.getNameAsString();
                 contentHeight++;
                 calculateContentWidth(classOrInterface.getNameAsString().length());
 
@@ -258,5 +267,26 @@ public class ParserJava
     {
         if (stringWidth > contentWidth)
             contentWidth = stringWidth;
+    }
+
+    public static void somethingThongWannaDo(ParserJava[] javas)
+    {
+        for (ParserJava java :  javas)
+        {
+            for (ParserJava jav : javas)
+            {
+                if (java.getExtendRelationship().trim().equals(jav.getClasses().trim()) && !java.appeared)
+                {
+                    java.appeared = true;
+                }
+            }
+        }
+        for (ParserJava java : javas)
+        {
+            if (!java.appeared)
+            {
+                java.setExtendRelationship("null");
+            }
+        }
     }
 }
