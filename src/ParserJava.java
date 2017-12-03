@@ -18,15 +18,15 @@ import java.util.ArrayList;
  */
 public class ParserJava {
 
-    private String content = "";
-    private int contentHeight;
-    private int contentWidth;
-    private String extendRelationship = "";
-    private String implementRelationship = "";
-    private String classes = "";
-    private String methods = "";
-    private String attributes = "";
-    private boolean appeared = false;
+    private String content = ""; // Store class name, attributes, methods, and relationship between classes
+    private int contentHeight; // Number of lines in content
+    private int contentWidth; // Width of the longest line in content
+    private String extendRelationship = ""; // Store class that class extends
+    private String implementRelationship = ""; // Store interfaces that class implements
+    private String classes = ""; // Store class name
+    private String methods = ""; // Store class methods
+    private String attributes = ""; // Store class attributes
+    private boolean appeared = false; // Java class appearance
 
 //    public static void main(String[] args) throws ParseProblemException
 //    {
@@ -76,39 +76,75 @@ public class ParserJava {
             ex.printStackTrace();
         }
     }
-
+    
+    /**
+     * Content getter
+     * @return Content of java file that is parsed
+     */
     public String getContent() {
         return content;
     }
-
+    
+    /**
+     * Content height getter
+     * @return Number of lines
+     */
     public int getContentHeight() {
         return contentHeight;
     }
-
+    
+    /**
+     * Content width getter
+     * @return Width of content
+     */
     public int getContentWidth() {
         return contentWidth;
     }
 
+    /**
+     * Extend getter
+     * @return Extend class that being extended
+     */
     public String getExtendRelationship() {
         return extendRelationship;
     }
 
+    /**
+     * Implement getter
+     * @return Implement class that being implemented
+     */
     public String getImplementRelationship() {
         return implementRelationship;
     }
 
+    /**
+     * Class name getter
+     * @return Name of class in java file
+     */
     public String getClasses() {
         return classes;
     }
 
+    /**
+     * Methods getter
+     * @return Methods of java file
+     */
     public String getMethods() {
         return methods;
     }
-
+    
+    /**
+     * Attributes getter
+     * @return Attributes of java file
+     */
     public String getAttributes() {
         return attributes;
     }
 
+    /**
+     * Extend setter
+     * @param extendRelationship Name of class being set
+     */
     public void setExtendRelationship(String extendRelationship) {
         this.extendRelationship = extendRelationship;
     }
@@ -256,7 +292,11 @@ public class ParserJava {
         }
     }
 
-    public static void somethingThongWannaDo(ParserJava[] javas) {
+    /**
+     * Replace the appearance of extend class
+     * @param javas Name of class being set
+     */
+    public static void replaceAppearance(ParserJava[] javas) {
         for (ParserJava java : javas) {
             for (ParserJava jav : javas) {
                 if (java.getExtendRelationship().trim().equals(jav.getClasses().trim()) && !java.appeared) {
