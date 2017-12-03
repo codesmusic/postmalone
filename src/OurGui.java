@@ -560,7 +560,7 @@ public class OurGui extends javax.swing.JFrame {
         }
 
         for (ParserJava pj : parser) {
-            ParserJava.somethingThongWannaDo(parser);
+            ParserJava.replaceAppearance(parser);
             Diagram dia = new Diagram(pj);
             diagramName.put(dia.getClasName(), dia);
             list.add(dia);
