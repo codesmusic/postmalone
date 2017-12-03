@@ -1,3 +1,5 @@
+package tq.s.uml;
+
 import java.io.File;
 import java.util.ArrayList;
 
@@ -9,7 +11,6 @@ public class FileFinder
 {
     // Store file paths
     private ArrayList<String> fileList = new ArrayList<>();
-    private ArrayList<String> fileNameList = new ArrayList<>();
 
     /**
      * Default constructor
@@ -36,10 +37,6 @@ public class FileFinder
         return fileList;
     }
 
-    public ArrayList<String> getFileNameList() {
-        return fileNameList;
-    }
-
     /**
      * Find all java files in folder
      * @param projectPath Folder that contains java files
@@ -58,7 +55,6 @@ public class FileFinder
                 if (file.getName().endsWith(".java"))
                 {
                     fileList.add(file.getAbsolutePath());
-                    fileNameList.add(file.getName().replace(".java", ""));
                 }
             }
             else if (file.isDirectory())
