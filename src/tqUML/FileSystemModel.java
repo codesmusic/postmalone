@@ -1,7 +1,7 @@
 package tqUML;
 
 /**
- * This class represent to a model
+ * This class represent to a tree model to create directory tree
  *
  * @author Le Trung Thong
  */

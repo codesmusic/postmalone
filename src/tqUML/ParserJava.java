@@ -28,35 +28,6 @@ public class ParserJava {
     private String attributes = ""; // Store class attributes
     private boolean appeared = false; // Java class appearance
 
-//    public static void main(String[] args) throws ParseProblemException
-//    {
-//        // Find all the java files in project recursively. Need to change path to project folder
-//        FileFinder fileFinder = new FileFinder("/home/linuxpenguin/IdeaProjects/milkcoffee/");
-//
-//        // An array that store java file path
-//        ArrayList<String> javaList =  fileFinder.getFileList();
-//
-//        // Number of java file inside javaList
-//        int size = javaList.size();
-//
-//        // Create an array of ParserJava
-//        ParserJava[] javas = new ParserJava[size];
-//
-//        System.out.println(size);
-//
-//        for (int i = 0; i < size; i++)
-//        {
-//            System.out.println(javaList.get(i));
-//            javas[i] = new ParserJava(javaList.get(i));
-//        }
-//
-//        // Print all methods of all java files
-//        for (ParserJava java : javas)
-//        {
-//            System.out.println(java.getMethods());
-//        }
-//
-//    }
     /**
      * Constructor
      *

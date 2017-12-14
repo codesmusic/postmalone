@@ -1,50 +1,54 @@
 package tqUML;
 
-
 import java.awt.Font;
-import java.awt.Point;
-import java.awt.geom.Line2D;
-import java.util.ArrayList;
 import java.util.Scanner;
 import javax.swing.*;
 
 /**
+ * This class represent to a structure for a class
+ * I am misunderstood meaning of the structure
+ * so I set name to "Diagram".
+ * Sorry for my mistake, I will fix it later
+ *
  * @author Le Trung Thong
  */
 public class Diagram extends JPanel {
-
-    // Name of class
+    /**
+     * Name of class in diagram
+     */
     private String clasName = "";
-    // Name of extend class
+    /**
+     * Name of class extend in diagram
+     */
     private String clasExtend = "";
 
     /**
-     * Getter of extend class name
-     * @return String class extend name
+     * Getter of class extend name
+     * @return
      */
     public String getClasExtend() {
         return clasExtend;
     }
 
     /**
-     * Setter of extend class name
-     * @param clasExtend String extend class name
+     * Setter of class extend name
+     * @param clasExtend
      */
     public void setClasExtend(String clasExtend) {
         this.clasExtend = clasExtend;
     }
 
     /**
-     * Class name getter
-     * @return Name of class
+     * Getter of class name
+     * @return
      */
     public String getClasName() {
         return clasName;
     }
 
     /**
-     * Class name setter
-     * @param clasName Stirng class name
+     * Setter of clas name
+     * @param clasName
      */
     public void setClasName(String clasName) {
         this.clasName = clasName;
@@ -57,28 +61,65 @@ public class Diagram extends JPanel {
      */
     public Diagram(ParserJava parser) {
         initComponents();
-
+        /**
+         * Diagram 's name
+         */
         String diaName = parser.getClasses();
+        /**
+         * All attribute of diagram
+         */
         String diaAtt = parser.getAttributes();
+        /**
+         * All method of diagram
+         */
         String diaMethod = parser.getMethods();
+
+        /**
+         * Set the class extend of this diagram
+         */
         this.setClasExtend(parser.getExtendRelationship());
+        /**
+         * Set the class name of this diagram
+         */
         this.setClasName(diaName);
+        /**
+         * Add class name to diagram with special font
+         */
         JLabel textClas = new JLabel(diaName);
         textClas.setOpaque(true);
         textClas.setFont(new Font("Tahoma", 1, 18));
         this.add(textClas);
+        /**
+         * Add a separator for beautiful view
+         */
         this.add(new JSeparator(SwingConstants.HORIZONTAL));
+
+        /**
+         * Two scanner stored strings to add per line to diagram
+         */
         Scanner inMethod = new Scanner(diaMethod);
         Scanner inAtt = new Scanner(diaAtt);
+        /**
+         * Add all attribute to diagram
+         */
         while (inAtt.hasNextLine()) {
             JLabel label = new JLabel(inAtt.nextLine());
             this.add(label);
         }
+        /**
+         * Add a separator for beautiful view
+         */
         this.add(new JSeparator(SwingConstants.HORIZONTAL));
+        /**
+         * Add all method to diagram
+         */
         while (inMethod.hasNextLine()) {
             JLabel label = new JLabel(inMethod.nextLine());
             this.add(label);
         }
+        /**
+         * Close two scanner
+         */
         inAtt.close();
         inMethod.close();
     }

@@ -1,8 +1,8 @@
 package tqUML;
 
 /**
- * The DragLayout is used as a layout manager for a Container that supports
- * random dragging of components with the Container.
+ * The DragLayout is used as a layout manager for a container that supports
+ * random dragging of components
  * @author Le Trung Thong
  */
 import java.awt.*;
@@ -140,7 +140,7 @@ public class DragLayout implements LayoutManager{
     }
 
     /**
-     * Get the size of component
+     * Get the size of component in present
      * @param component
      * @return
      */

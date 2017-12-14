@@ -103,14 +103,14 @@ public class WorkContainer extends JPanel implements MouseWheelListener{
         scale+= addRate;
 
         for (Diagram list: listNoExtends){
-            changeTextRatio(list,addRate);
+            //changeTextRatio(list,addRate);
             list.setBounds((int) Math.round(list.getX()*scale),(int) Math.round(list.getY()*scale),
                     (int) Math.round(list.getWidth()*scale),(int) Math.round(list.getHeight()*scale));
 
         }
 
         for (Diagram list: listExtends){
-            changeTextRatio(list,addRate);
+            //changeTextRatio(list,addRate);
             list.setBounds((int) Math.round(list.getX()*scale),(int) Math.round(list.getY()*scale),
                     (int) Math.round(list.getWidth()*scale),(int) Math.round(list.getHeight()*scale));
         }
@@ -126,7 +126,7 @@ public class WorkContainer extends JPanel implements MouseWheelListener{
             if (c instanceof JLabel){
                 int size = c.getFont().getSize();
                 int style = c.getFont().getStyle();
-                c.setFont(new Font("Tahoma",style,(int) Math.round(size*(scale - addRate/3))));
+                c.setFont(new Font("Tahoma",style,(int) Math.round(size*(scale))));
             }
         }
     }

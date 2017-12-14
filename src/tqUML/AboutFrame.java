@@ -17,9 +17,6 @@ public class AboutFrame extends JFrame {
 
     }
 
-    /**
-     * Generate default components
-     */
     private void initComponents() {
 
         jLabel1 = new JLabel();
@@ -67,8 +64,8 @@ public class AboutFrame extends JFrame {
      * All the labels in frame
      */
 
-    private JLabel jLabel1; // GUI developer name
-    private JLabel jLabel2; // Parser developer name
-    private JLabel jLabel3; // Version
+    private JLabel jLabel1;
+    private JLabel jLabel2;
+    private JLabel jLabel3;
 
 }

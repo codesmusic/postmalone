@@ -1,6 +1,6 @@
 package tqUML;
 
-//import com.sun.glass.events.KeyEvent;
+import com.sun.glass.events.KeyEvent;
 
 import java.awt.*;
 import javax.imageio.ImageIO;
@@ -50,7 +50,7 @@ public class OurGui extends JFrame {
     private JTree directoryTree;
     private JMenuItem fileItemArrange;
     private JMenuItem fileItemClear;
-    private JMenuItem fileItemFind;
+    private JMenuItem fileItemSaveTxt;
     private JMenuItem fileItemOpen;
     private JMenuItem fileItemSaveAs;
     private JMenuItem fileMenuClose;
@@ -104,7 +104,7 @@ public class OurGui extends JFrame {
         menuFile = new JMenu();
         fileItemClear = new JMenuItem();
         fileItemArrange = new JMenuItem();
-        fileItemFind = new JMenuItem();
+        fileItemSaveTxt = new JMenuItem();
         fileMenuSeparator = new JPopupMenu.Separator();
         fileItemOpen = new JMenuItem();
         fileItemSaveAs = new JMenuItem();
@@ -156,16 +156,16 @@ public class OurGui extends JFrame {
         });
         menuFile.add(fileItemArrange);
         // File >> Find
-        fileItemFind.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, InputEvent.CTRL_MASK));
-        fileItemFind.setIcon(new ImageIcon(getClass().getResource("/imageIcon/findIcon.png")));
-        fileItemFind.setMnemonic('f');
-        fileItemFind.setText("Find");
-        fileItemFind.addActionListener(new ActionListener() {
+        fileItemSaveTxt.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_X, InputEvent.CTRL_MASK));
+        fileItemSaveTxt.setIcon(new ImageIcon(getClass().getResource("/imageIcon/saveIcon.png")));
+        fileItemSaveTxt.setMnemonic('x');
+        fileItemSaveTxt.setText("SaveTxt");
+        fileItemSaveTxt.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                fileItemFindActionPerformed(evt);
+                fileItemSaveTxtActionPerformed(evt);
             }
         });
-        menuFile.add(fileItemFind);
+        menuFile.add(fileItemSaveTxt);
         // A line to split menuFile
         menuFile.add(fileMenuSeparator);
         // File >> Open source
@@ -233,7 +233,7 @@ public class OurGui extends JFrame {
         menuTool.setText("Tool");
         menuTool.setToolTipText("");
         // Tool >> Zoom in
-        zoomIn.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_I, InputEvent.CTRL_MASK));
+        zoomIn.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_PLUS, InputEvent.CTRL_MASK));
         zoomIn.setIcon(new ImageIcon(getClass().getResource("/imageIcon/zoomInIcon.png")));
         zoomIn.setText("Zoom In");
         zoomIn.addActionListener(new ActionListener() {
@@ -244,7 +244,7 @@ public class OurGui extends JFrame {
         });
         menuTool.add(zoomIn);
         // Tool >> Zoom out
-        zoomOut.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_U, InputEvent.CTRL_MASK));
+        zoomOut.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_MINUS, InputEvent.CTRL_MASK));
         zoomOut.setIcon(new ImageIcon(getClass().getResource("/imageIcon/zoomOutIcon.png")));
         zoomOut.setText("Zoom Out");
         zoomOut.addActionListener(new ActionListener() {
@@ -317,6 +317,7 @@ public class OurGui extends JFrame {
         saveBtn.setFocusable(false);
         saveBtn.setHorizontalTextPosition(SwingConstants.CENTER);
         saveBtn.setVerticalTextPosition(SwingConstants.BOTTOM);
+        saveBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
         saveBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent evt) {
@@ -344,7 +345,7 @@ public class OurGui extends JFrame {
         toolBar.add(jLabel1);
         // Find field setting up
         findField.setText("Find (Ctrl + F)");
-        findField.setAction(fileItemFind.getAction());
+        findField.setAction(fileItemSaveTxt.getAction());
         findField.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED, Color.gray, Color.gray));
         findField.setCursor(new Cursor(Cursor.TEXT_CURSOR));
         findField.setMaximumSize(new Dimension(200, 30));
@@ -378,7 +379,7 @@ public class OurGui extends JFrame {
          */
         splitPane.setResizeWeight(0.5);
         splitPane.setAutoscrolls(true);
-        splitPane.setMinimumSize(new Dimension(3, 5));
+        splitPane.setMinimumSize(new Dimension(1, 5));
         splitPane.setPreferredSize(new Dimension(500, 536));
         /**
          * Define default outline directory tree
@@ -434,20 +435,20 @@ public class OurGui extends JFrame {
 
     /**
      * Perform action: Zoom in
+     *
      * @param evt
      */
     private void zoomInBtnActionPerformed(ActionEvent evt) {
-//        workPanel.setScale(workPanel.getScale() + 0.15);
-        workPanel.changeRatio(listExtends,listNoExtends,0.15);
+        workPanel.changeRatio(listExtends, listNoExtends, 0.1);
     }
+
     /**
      * Perform action: Zoom out
      *
      * @param evt
      */
     private void zoomOutBtnActionPerformed(ActionEvent evt) {
-//        workPanel.setScale(workPanel.getScale() - 0.15);
-        workPanel.changeRatio(listExtends,listNoExtends,-0.15);
+        workPanel.changeRatio(listExtends, listNoExtends, -0.1);
     }
 
     /**
@@ -467,11 +468,14 @@ public class OurGui extends JFrame {
     private void fileItemClearActionPerformed(ActionEvent evt) {
         // confirm and clear the entire diagram
         if (JOptionPane.showConfirmDialog(this,
-                        "Are you sure you want to clear the Diagram?\nThis action can not be undone!",
-                        "Clear", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                "Are you sure you want to clear the Diagram?\nThis action can not be undone!",
+                "Clear", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
             directoryTree.setModel(null);
             workPanel.removeAll();
             connectors.clear();
+            listNoExtends.clear();
+            listExtends.clear();
+            listDiagram = null;
             maxWorkPanelWidth = 0;
             maxWorkPanelHeight = 0;
             workPanel.repaint();
@@ -562,7 +566,6 @@ public class OurGui extends JFrame {
      * @param evt
      */
     private void fileItemArrangeActionPerformed(ActionEvent evt) {
-        //workPanel.paintImage();
     }
 
     /**
@@ -570,8 +573,54 @@ public class OurGui extends JFrame {
      *
      * @param evt
      */
-    private void fileItemFindActionPerformed(ActionEvent evt) {
+    private void fileItemSaveTxtActionPerformed(ActionEvent evt) {
 
+
+        String result = "";
+        for (Diagram list : listExtends) {
+            result += list.getClasName() + " extends " + list.getClasExtend() + "\n";
+        }
+
+        /**
+         * Construct buffered reader
+         */
+        BufferedWriter bw = null;
+        /**
+         * Construct file reader
+         */
+        FileWriter fw = null;
+        /**
+         * Read file
+         */
+        try {
+            fw = new FileWriter("C:\\Users\\PC\\Desktop\\result.txt");
+            bw = new BufferedWriter(fw);
+
+            String content = result;
+
+            bw = new BufferedWriter(new FileWriter("C:\\Users\\PC\\Desktop\\result.txt"));
+            bw.write(content);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                /**
+                 * Check if br is closed or not
+                 */
+                if (bw != null)
+                    bw.close();
+                /**
+                 * Check if fr is closed or not
+                 */
+                if (fw != null)
+                    fw.close();
+
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -704,6 +753,7 @@ public class OurGui extends JFrame {
         // Make the data completely trim
         ParserJava.replaceAppearance(parser);
         for (ParserJava pj : parser) {
+
             // Generate new diagram
             Diagram dia = new Diagram(pj);
             // Add diagram to hash map and list
@@ -747,7 +797,7 @@ public class OurGui extends JFrame {
             dia.addMouseListener(drag);
             dia.addMouseMotionListener(drag);
             connectors.add(new Connector(dia, diagramName.get(dia.getClasExtend().trim()),
-                    ConnectLine.LINE_ARROW_DEST, Connector.CONNECT_LINE_TYPE_RECTANGLE, Color.blue));
+                    ConnectLine.LINE_ARROW_DEST, Connector.CONNECT_LINE_TYPE_SIMPLE, Color.blue));
             workPanel.add(dia);
         }
         // Get all components in work space to listDiagram
@@ -764,6 +814,9 @@ public class OurGui extends JFrame {
      */
     private void makePanelImage(Component panel) {
         try {
+            /**
+             * Open file chooser to get file path where will save to
+             */
             JFileChooser saveFileChooser = new JFileChooser("C:\\");
             saveFileChooser.setDialogTitle("Save as image");
             saveFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -785,23 +838,38 @@ public class OurGui extends JFrame {
                     return "Supported Image Formats (.PNG)";
                 }
             });
+            /**
+             * Path file to save
+             */
             File path = null;
+            /**
+             * Name of image is to be saved
+             */
             String name = "";
+
             int returnValue = saveFileChooser.showOpenDialog(this);
             if (returnValue == JFileChooser.APPROVE_OPTION) {
                 path = saveFileChooser.getSelectedFile();
             }
             if (path != null) {
                 Dimension size = panel.getSize();
+                /**
+                 * Get image from panel
+                 */
                 BufferedImage image = new BufferedImage(
                         size.width, size.height
                         , BufferedImage.TYPE_INT_RGB);
                 Graphics2D g2 = image.createGraphics();
                 panel.paint(g2);
+                /**
+                 * Check if path name have type of image or not
+                 */
                 if (path.getAbsolutePath().substring(path.getAbsolutePath().length() - 4).toLowerCase().equals(".png")) {
                     name = path.getAbsolutePath().substring(0, path.getAbsolutePath().length() - 4);
-                }
-                name = path.getAbsolutePath();
+                } else name = path.getAbsolutePath();
+                /**
+                 * Write image to path
+                 */
                 ImageIO.write(image, "png", new File(name + ".png"));
             }
         } catch (Exception e) {
